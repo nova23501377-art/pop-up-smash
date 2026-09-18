@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pop Smash!</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #111827, #312e81);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .game {
+      width: min(94vw, 600px);
+      padding: 25px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(42px, 8vw, 70px);
+      color: #facc15;
+      text-shadow:
+        0 4px 0 #b45309,
+        0 8px 20px rgba(0,0,0,.5);
+    }
+
+    .subtitle {
+      margin-bottom: 20px;
+      color: #d1d5db;
+      font-size: 18px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,.12);
+      border: 2px solid rgba(255,255,255,.18);
+      border-radius: 15px;
+      padding: 10px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .stat-number {
+      font-size: 30px;
+      font-weight: bold;
+      margin-top: 3px;
+    }
+
+    #timer.warning {
+      color: #fb7185;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 0 auto 22px;
+    }
+
+    .hole {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      border-radius: 22px;
+      overflow: hidden;
+      cursor: pointer;
+      background:
+        radial-gradient(
+          ellipse at center,
+          #020617 0%,
+          #020617 40%,
+          #1e293b 43%,
+          #475569 55%,
+          #0f172a 100%
+        );
+      border: 3px solid rgba(255,255,255,.15);
+      box-shadow:
+        inset 0 8px 15px rgba(0,0,0,.8),
+        0 6px 12px rgba(0,0,0,.3);
+    }
+
+    .target {
+      position: absolute;
+      width: 72%;
+      height: 72%;
+      left: 14%;
+      bottom: -85%;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #f97316, #dc2626);
+      border: 5px solid #fed7aa;
+      box-shadow:
+        inset -8px -10px 0 rgba(0,0,0,.15),
+        0 6px 12px rgba(0,0,0,.4);
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      font-size: clamp(30px, 7vw, 55px);
+
+      transition: bottom .12s ease-out, transform .08s ease;
+    }
+
+    .hole.active .target {
+      bottom: 12%;
+    }
+
+    .target::before {
+      content: "💥";
+    }
+
+    .hole.hit .target {
+      transform: scale(.65) rotate(15deg);
+    }
+
+    button {
+      border: none;
+      border-radius: 16px;
+      padding: 15px 38px;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #facc15;
+      color: #111827;
+      box-shadow:
+        0 6px 0 #b45309,
+        0 10px 20px rgba(0,0,0,.35);
+      transition: transform .08s, box-shadow .08s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(5px);
+      box-shadow:
+        0 1px 0 #b45309,
+        0 4px 10px rgba(0,0,0,.35);
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: default;
+    }
+
+    #message {
+      min-height: 32px;
+      margin-top: 18px;
+      font-size: 21px;
+      font-weight: bold;
+      color: #facc15;
+    }
+
+    .flash {
+      animation: flash .18s ease;
+    }
+
+    @keyframes flash {
+      50% {
+        background-color: rgba(255,255,255,.25);
+      }
+    }
+
+    @media (max-width: 450px) {
+      .game {
+        padding: 15px;
+      }
+
+      .board {
+        gap: 8px;
+      }
+
+      .hole {
+        border-radius: 15px;
+      }
+
+      .stat-number {
+        font-size: 25px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="game">
+
+    <h1>POP SMASH!</h1>
+
+    <div class="subtitle">
+      Smash the targets before they disappear!
+    </div>
+
+    <section class="stats">
+
+      <div class="stat">
+        <div class="stat-label">Score</div>
+        <div class="stat-number" id="score">0</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">Time</div>
+        <div class="stat-number" id="timer">30</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">Misses</div>
+        <div class="stat-number" id="misses">0</div>
+      </div>
+
+    </section>
+
+    <section class="board" id="board">
+
+      <div class="hole"><div class="target"></div></div>
+      <div class="hole"><div class="target"></div></div>
+      <div class="hole"><div class="target"></div></div>
+
+      <div class="hole"><div class="target"></div></div>
+      <div class="hole"><div class="target"></div></div>
+      <div class="hole"><div class="target"></div></div>
+
+      <div class="hole"><div class="target"></div></div>
+      <div class="hole"><div class="target"></div></div>
+      <div class="hole"><div class="target"></div></div>
+
+    </section>
+
+    <button id="startButton">
+      START GAME
+    </button>
+
+    <div id="message">
+      Press START to play
+    </div>
+
+  </main>
+
+
+  <script>
+
+    const holes = document.querySelectorAll(".hole");
+    const scoreDisplay = document.getElementById("score");
+    const timerDisplay = document.getElementById("timer");
+    const missesDisplay = document.getElementById("misses");
+    const startButton = document.getElementById("startButton");
+    const message = document.getElementById("message");
+
+    let score = 0;
+    let misses = 0;
+    let timeLeft = 30;
+
+    let gameRunning = false;
+
+    let currentHole = null;
+    let targetTimeout = null;
+    let spawnTimeout = null;
+    let timerInterval = null;
+
+
+    function randomHole() {
+
+      let newHole;
+
+      do {
+        newHole = holes[
+          Math.floor(Math.random() * holes.length)
+        ];
+      }
+      while (newHole === currentHole && holes.length > 1);
+
+      return newHole;
+    }
+
+
+    function showTarget() {
+
+      if (!gameRunning) return;
+
+      const hole = randomHole();
+
+      currentHole = hole;
+
+      hole.classList.add("active");
+
+      /*
+        Target stays visible for a random amount
+        of time between 550 and 1000 milliseconds.
+      */
+
+      const visibleTime =
+        Math.floor(Math.random() * 451) + 550;
+
+
+      targetTimeout = setTimeout(() => {
+
+        if (!gameRunning) return;
+
+        if (hole.classList.contains("active")) {
+
+          hole.classList.remove("active");
+
+          misses++;
+
+          missesDisplay.textContent = misses;
+        }
+
+        currentHole = null;
+
+        scheduleNextTarget();
+
+      }, visibleTime);
+    }
+
+
+    function scheduleNextTarget() {
+
+      if (!gameRunning) return;
+
+      /*
+        Small random delay before the next target.
+      */
+
+      const delay =
+        Math.floor(Math.random() * 350) + 150;
+
+      spawnTimeout =
+        setTimeout(showTarget, delay);
+    }
+
+
+    function hitTarget(hole) {
+
+      if (!gameRunning) return;
+
+      if (!hole.classList.contains("active")) {
+        return;
+      }
+
+      clearTimeout(targetTimeout);
+
+      hole.classList.remove("active");
+      hole.classList.add("hit");
+
+      score++;
+
+      scoreDisplay.textContent = score;
+
+      message.textContent = "SMASH! 💥";
+
+      setTimeout(() => {
+        hole.classList.remove("hit");
+      }, 100);
+
+      currentHole = null;
+
+      scheduleNextTarget();
+    }
+
+
+    holes.forEach(hole => {
+
+      hole.addEventListener("click", () => {
+        hitTarget(hole);
+      });
+
+      /*
+        Makes it respond nicely on touch screens.
+      */
+
+      hole.addEventListener(
+        "touchstart",
+        (event) => {
+
+          event.preventDefault();
+
+          hitTarget(hole);
+
+        },
+        { passive: false }
+      );
+
+    });
+
+
+    function startGame() {
+
+      /*
+        Clear anything left from a previous game.
+      */
+
+      clearTimeout(targetTimeout);
+      clearTimeout(spawnTimeout);
+      clearInterval(timerInterval);
+
+      holes.forEach(hole => {
+        hole.classList.remove("active");
+        hole.classList.remove("hit");
+      });
+
+
+      score = 0;
+      misses = 0;
+      timeLeft = 30;
+
+      scoreDisplay.textContent = score;
+      missesDisplay.textContent = misses;
+      timerDisplay.textContent = timeLeft;
+
+      timerDisplay.classList.remove("warning");
+
+      gameRunning = true;
+
+      currentHole = null;
+
+      startButton.disabled = true;
+      startButton.textContent = "GAME ON!";
+
+      message.textContent = "GET READY...";
+
+      /*
+        Start popping targets.
+      */
+
+      setTimeout(() => {
+
+        if (gameRunning) {
+
+          message.textContent = "SMASH 'EM!";
+
+          showTarget();
+
+        }
+
+      }, 500);
+
+
+      /*
+        30 second countdown.
+      */
+
+      timerInterval = setInterval(() => {
+
+        timeLeft--;
+
+        timerDisplay.textContent = timeLeft;
+
+        if (timeLeft <= 5) {
+          timerDisplay.classList.add("warning");
+        }
+
+        if (timeLeft <= 0) {
+          endGame();
+        }
+
+      }, 1000);
+    }
+
+
+    function endGame() {
+
+      gameRunning = false;
+
+      clearInterval(timerInterval);
+      clearTimeout(targetTimeout);
+      clearTimeout(spawnTimeout);
+
+      holes.forEach(hole => {
+        hole.classList.remove("active");
+        hole.classList.remove("hit");
+      });
+
+      currentHole = null;
+
+      timerDisplay.textContent = "0";
+
+      startButton.disabled = false;
+      startButton.textContent = "PLAY AGAIN";
+
+      /*
+        Different ending messages depending
+        on the player's score.
+      */
+
+      if (score >= 30) {
+
+        message.textContent =
+          "🔥 UNREAL! Score: " + score;
+
+      }
+      else if (score >= 20) {
+
+        message.textContent =
+          "💥 AWESOME! Score: " + score;
+
+      }
+      else if (score >= 10) {
+
+        message.textContent =
+          "👏 NICE RUN! Score: " + score;
+
+      }
+      else {
+
+        message.textContent =
+          "GAME OVER — Score: " + score;
+
+      }
+    }
+
+
+    startButton.addEventListener(
+      "click",
+      startGame
+    );
+
+  </script>
+
+</body>
+</html>
