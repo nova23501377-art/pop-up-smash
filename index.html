@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Pop-Up Smash!</title>
 
   <style>
@@ -13,14 +12,12 @@
       user-select: none;
     }
 
-    html,
-    body {
+    html, body {
       margin: 0;
       padding: 0;
       min-height: 100%;
       font-family: Arial, Helvetica, sans-serif;
-      background:
-        radial-gradient(circle at top, #4338ca 0%, #1e1b4b 45%, #09090b 100%);
+      background: radial-gradient(circle at top, #4338ca 0%, #1e1b4b 45%, #09090b 100%);
       color: white;
     }
 
@@ -43,10 +40,6 @@
       text-align: center;
     }
 
-    /* -------------------------
-       TITLE
-    -------------------------- */
-
     .logo {
       margin: 0;
       font-size: clamp(42px, 10vw, 72px);
@@ -54,11 +47,10 @@
       font-weight: 900;
       color: #facc15;
       letter-spacing: -3px;
-
       text-shadow:
         0 4px 0 #ea580c,
         0 8px 0 #9a3412,
-        0 12px 25px rgba(0, 0, 0, 0.45);
+        0 12px 25px rgba(0,0,0,.45);
     }
 
     .subtitle {
@@ -66,10 +58,6 @@
       font-size: clamp(15px, 4vw, 19px);
       color: #e2e8f0;
     }
-
-    /* -------------------------
-       SCREENS
-    -------------------------- */
 
     .screen {
       display: none;
@@ -79,9 +67,7 @@
       display: block;
     }
 
-    /* -------------------------
-       CHARACTER SELECT
-    -------------------------- */
+    /* CHARACTER SELECTION */
 
     .select-title {
       font-size: clamp(23px, 6vw, 32px);
@@ -103,33 +89,27 @@
     }
 
     .character-card {
-      position: relative;
-      border: 3px solid rgba(255, 255, 255, 0.15);
-      background: rgba(255, 255, 255, 0.09);
+      border: 3px solid rgba(255,255,255,.15);
+      background: rgba(255,255,255,.09);
       border-radius: 20px;
       padding: 13px 6px 12px;
       cursor: pointer;
-      transition:
-        transform 0.15s ease,
-        border-color 0.15s ease,
-        background 0.15s ease;
-
       color: white;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
     }
 
     .character-card:hover {
       transform: translateY(-4px);
-      background: rgba(255, 255, 255, 0.14);
+      background: rgba(255,255,255,.14);
     }
 
     .character-card.selected {
       border-color: #facc15;
-      background: rgba(250, 204, 21, 0.18);
+      background: rgba(250,204,21,.18);
       transform: translateY(-5px) scale(1.02);
-
       box-shadow:
-        0 0 0 3px rgba(250, 204, 21, 0.15),
-        0 12px 25px rgba(0, 0, 0, 0.25);
+        0 0 0 3px rgba(250,204,21,.15),
+        0 12px 25px rgba(0,0,0,.25);
     }
 
     .character-preview {
@@ -137,29 +117,16 @@
       height: min(20vw, 100px);
       min-width: 72px;
       min-height: 72px;
-
       margin: 0 auto 10px;
       border-radius: 50%;
-
       display: flex;
       justify-content: center;
       align-items: center;
-
       font-size: clamp(42px, 10vw, 65px);
-
-      background:
-        linear-gradient(145deg, #f8fafc, #cbd5e1);
-
       border: 4px solid white;
-
       box-shadow:
-        inset 0 -8px 0 rgba(0, 0, 0, 0.12),
-        0 7px 12px rgba(0, 0, 0, 0.3);
-    }
-
-    .character-name {
-      font-weight: 900;
-      font-size: clamp(13px, 3.5vw, 17px);
+        inset 0 -8px 0 rgba(0,0,0,.12),
+        0 7px 12px rgba(0,0,0,.3);
     }
 
     .character-card:nth-child(1) .character-preview {
@@ -174,31 +141,27 @@
       background: linear-gradient(145deg, #93c5fd, #7c3aed);
     }
 
-    /* -------------------------
-       BUTTONS
-    -------------------------- */
+    .character-name {
+      font-weight: 900;
+      font-size: clamp(13px, 3.5vw, 17px);
+    }
+
+    /* BUTTONS */
 
     .main-button {
       border: 0;
       border-radius: 17px;
       padding: 15px 32px;
       min-width: 210px;
-
       background: #facc15;
       color: #111827;
-
       font-size: 21px;
       font-weight: 900;
-
       cursor: pointer;
-
       box-shadow:
         0 6px 0 #b45309,
-        0 10px 22px rgba(0, 0, 0, 0.35);
-
-      transition:
-        transform 0.08s ease,
-        box-shadow 0.08s ease;
+        0 10px 22px rgba(0,0,0,.35);
+      transition: transform .08s ease, box-shadow .08s ease;
     }
 
     .main-button:hover {
@@ -207,22 +170,21 @@
 
     .main-button:active {
       transform: translateY(5px);
-
       box-shadow:
         0 1px 0 #b45309,
-        0 4px 10px rgba(0, 0, 0, 0.3);
+        0 4px 10px rgba(0,0,0,.3);
     }
 
     .main-button:disabled {
-      opacity: 0.45;
+      opacity: .45;
       cursor: not-allowed;
       transform: none;
     }
 
     .small-button {
       margin-top: 14px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      background: rgba(255, 255, 255, 0.08);
+      border: 2px solid rgba(255,255,255,.3);
+      background: rgba(255,255,255,.08);
       color: white;
       border-radius: 12px;
       padding: 9px 16px;
@@ -230,26 +192,21 @@
       cursor: pointer;
     }
 
-    /* -------------------------
-       GAME HUD
-    -------------------------- */
+    /* HUD */
 
     .hud {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 9px;
-      margin: 0 0 14px;
+      margin-bottom: 14px;
     }
 
     .stat {
       padding: 9px 5px;
       border-radius: 15px;
-
-      background: rgba(255, 255, 255, 0.11);
-      border: 2px solid rgba(255, 255, 255, 0.12);
-
-      box-shadow:
-        0 6px 15px rgba(0, 0, 0, 0.2);
+      background: rgba(255,255,255,.11);
+      border: 2px solid rgba(255,255,255,.12);
+      box-shadow: 0 6px 15px rgba(0,0,0,.2);
     }
 
     .stat-label {
@@ -268,28 +225,20 @@
 
     #timer.warning {
       color: #fb7185;
-      animation: pulse 0.55s infinite alternate;
+      animation: pulse .55s infinite alternate;
     }
 
     @keyframes pulse {
-      from {
-        transform: scale(1);
-      }
-
-      to {
-        transform: scale(1.13);
-      }
+      from { transform: scale(1); }
+      to { transform: scale(1.13); }
     }
 
-    /* -------------------------
-       GAME BOARD
-    -------------------------- */
+    /* BOARD */
 
     .board {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: clamp(7px, 2vw, 12px);
-
       width: 100%;
       margin: 0 auto 18px;
     }
@@ -297,82 +246,57 @@
     .hole {
       position: relative;
       aspect-ratio: 1 / 1;
-
       border-radius: clamp(14px, 4vw, 23px);
-
       overflow: hidden;
       cursor: pointer;
-
-      border: 3px solid rgba(255, 255, 255, 0.13);
-
+      border: 3px solid rgba(255,255,255,.13);
       background:
         radial-gradient(
           ellipse at 50% 61%,
-          #000000 0%,
+          #000 0%,
           #020617 37%,
           #172033 40%,
           #475569 53%,
           #111827 70%,
           #0f172a 100%
         );
-
       box-shadow:
-        inset 0 8px 18px rgba(0, 0, 0, 0.9),
-        0 6px 13px rgba(0, 0, 0, 0.32);
+        inset 0 8px 18px rgba(0,0,0,.9),
+        0 6px 13px rgba(0,0,0,.32);
     }
 
     .hole::after {
       content: "";
       position: absolute;
-
       width: 80%;
       height: 19%;
-
       left: 10%;
       bottom: 6%;
-
       background: #020617;
       border-radius: 50%;
-
-      opacity: 0.9;
-
+      opacity: .9;
       z-index: 3;
     }
 
-    /* -------------------------
-       POP-UP TARGET
-    -------------------------- */
+    /* TARGET */
 
     .target {
       position: absolute;
-
       width: 72%;
       height: 72%;
-
       left: 14%;
       bottom: -78%;
-
       border-radius: 50% 50% 44% 44%;
-
       display: flex;
       justify-content: center;
       align-items: center;
-
       font-size: clamp(42px, 12vw, 72px);
-
-      background:
-        linear-gradient(145deg, #f8fafc, #94a3b8);
-
+      background: linear-gradient(145deg, #f8fafc, #94a3b8);
       border: 4px solid white;
-
       box-shadow:
-        inset 0 -9px 0 rgba(0, 0, 0, 0.15),
-        0 8px 14px rgba(0, 0, 0, 0.4);
-
-      transition:
-        bottom 0.13s ease-out,
-        transform 0.09s ease;
-
+        inset 0 -9px 0 rgba(0,0,0,.15),
+        0 8px 14px rgba(0,0,0,.4);
+      transition: bottom .13s ease-out, transform .09s ease;
       z-index: 2;
     }
 
@@ -393,23 +317,19 @@
     }
 
     .hole.hit .target {
-      transform: scale(0.55) rotate(20deg);
+      transform: scale(.55) rotate(20deg);
     }
 
     .hole.hit {
-      animation: holeHit 0.16s ease;
+      animation: holeHit .16s ease;
     }
 
     @keyframes holeHit {
       50% {
         border-color: #facc15;
-        transform: scale(0.96);
+        transform: scale(.96);
       }
     }
-
-    /* -------------------------
-       GAME MESSAGE
-    -------------------------- */
 
     #message {
       min-height: 30px;
@@ -419,19 +339,14 @@
       font-weight: 900;
     }
 
-    /* -------------------------
-       GAME OVER PANEL
-    -------------------------- */
+    /* GAME OVER */
 
     .game-over {
       display: none;
-
-      margin: 15px 0 0;
+      margin-top: 15px;
       padding: 17px;
-
-      background: rgba(0, 0, 0, 0.28);
-
-      border: 2px solid rgba(255, 255, 255, 0.12);
+      background: rgba(0,0,0,.28);
+      border: 2px solid rgba(255,255,255,.12);
       border-radius: 18px;
     }
 
@@ -449,14 +364,10 @@
     .final-score {
       font-size: 19px;
       margin-bottom: 15px;
+      line-height: 1.5;
     }
 
-    /* -------------------------
-       MOBILE
-    -------------------------- */
-
     @media (max-width: 480px) {
-
       body {
         align-items: flex-start;
       }
@@ -488,7 +399,6 @@
     }
 
     @media (max-height: 720px) and (orientation: landscape) {
-
       body {
         align-items: flex-start;
       }
@@ -528,10 +438,7 @@
       Pick your target. Then smash as many as you can!
     </div>
 
-
-    <!-- =====================================
-         CHARACTER SELECTION SCREEN
-    ====================================== -->
+    <!-- CHARACTER SELECTION -->
 
     <section id="characterScreen" class="screen active">
 
@@ -552,17 +459,9 @@
           data-name="Goofball"
           type="button"
         >
-
-          <div class="character-preview">
-            🤪
-          </div>
-
-          <div class="character-name">
-            GOOFBALL
-          </div>
-
+          <div class="character-preview">🤪</div>
+          <div class="character-name">GOOFBALL</div>
         </button>
-
 
         <button
           class="character-card"
@@ -571,17 +470,9 @@
           data-name="Alien"
           type="button"
         >
-
-          <div class="character-preview">
-            👽
-          </div>
-
-          <div class="character-name">
-            ALIEN
-          </div>
-
+          <div class="character-preview">👽</div>
+          <div class="character-name">ALIEN</div>
         </button>
-
 
         <button
           class="character-card"
@@ -590,19 +481,11 @@
           data-name="Clown"
           type="button"
         >
-
-          <div class="character-preview">
-            🤡
-          </div>
-
-          <div class="character-name">
-            CLOWN
-          </div>
-
+          <div class="character-preview">🤡</div>
+          <div class="character-name">CLOWN</div>
         </button>
 
       </div>
-
 
       <button
         id="continueButton"
@@ -615,10 +498,7 @@
 
     </section>
 
-
-    <!-- =====================================
-         GAME SCREEN
-    ====================================== -->
+    <!-- GAME SCREEN -->
 
     <section id="gameScreen" class="screen">
 
@@ -641,49 +521,21 @@
 
       </div>
 
-
       <div id="board" class="board">
 
-        <div class="hole">
-          <div class="target"></div>
-        </div>
+        <div class="hole"><div class="target"></div></div>
+        <div class="hole"><div class="target"></div></div>
+        <div class="hole"><div class="target"></div></div>
 
-        <div class="hole">
-          <div class="target"></div>
-        </div>
+        <div class="hole"><div class="target"></div></div>
+        <div class="hole"><div class="target"></div></div>
+        <div class="hole"><div class="target"></div></div>
 
-        <div class="hole">
-          <div class="target"></div>
-        </div>
-
-
-        <div class="hole">
-          <div class="target"></div>
-        </div>
-
-        <div class="hole">
-          <div class="target"></div>
-        </div>
-
-        <div class="hole">
-          <div class="target"></div>
-        </div>
-
-
-        <div class="hole">
-          <div class="target"></div>
-        </div>
-
-        <div class="hole">
-          <div class="target"></div>
-        </div>
-
-        <div class="hole">
-          <div class="target"></div>
-        </div>
+        <div class="hole"><div class="target"></div></div>
+        <div class="hole"><div class="target"></div></div>
+        <div class="hole"><div class="target"></div></div>
 
       </div>
-
 
       <button
         id="startButton"
@@ -693,11 +545,9 @@
         START GAME
       </button>
 
-
       <div id="message">
         Ready to smash?
       </div>
-
 
       <button
         id="changeCharacterButton"
@@ -706,7 +556,6 @@
       >
         Change Character
       </button>
-
 
       <div id="gameOver" class="game-over">
 
@@ -731,7 +580,6 @@
     </section>
 
   </main>
-
 
   <script>
 
@@ -798,12 +646,189 @@
     let timeLeft = 30;
 
     let gameRunning = false;
-
     let currentHole = null;
 
     let targetTimeout = null;
     let spawnTimeout = null;
     let timerInterval = null;
+    let firstTargetTimeout = null;
+
+
+    /* =====================================
+       BUILT-IN AUDIO
+
+       Uses Web Audio API.
+       No external sound files required.
+    ====================================== */
+
+    let audioContext = null;
+
+    function initAudio() {
+
+      if (!audioContext) {
+
+        const AudioContext =
+          window.AudioContext ||
+          window.webkitAudioContext;
+
+        if (AudioContext) {
+          audioContext = new AudioContext();
+        }
+
+      }
+
+      if (
+        audioContext &&
+        audioContext.state === "suspended"
+      ) {
+        audioContext.resume();
+      }
+    }
+
+
+    /*
+      Basic tone generator.
+    */
+
+    function playTone(
+      frequency,
+      duration,
+      type = "sine",
+      volume = 0.12,
+      endFrequency = null
+    ) {
+
+      if (!audioContext) return;
+
+      const now = audioContext.currentTime;
+
+      const oscillator =
+        audioContext.createOscillator();
+
+      const gain =
+        audioContext.createGain();
+
+      oscillator.type = type;
+
+      oscillator.frequency.setValueAtTime(
+        frequency,
+        now
+      );
+
+      if (endFrequency !== null) {
+
+        oscillator.frequency.exponentialRampToValueAtTime(
+          Math.max(1, endFrequency),
+          now + duration
+        );
+
+      }
+
+      gain.gain.setValueAtTime(
+        volume,
+        now
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        now + duration
+      );
+
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+
+      oscillator.start(now);
+      oscillator.stop(now + duration);
+    }
+
+
+    /*
+      POP SOUND
+
+      Short high-pitched "boop" whenever
+      a target comes out of a hole.
+    */
+
+    function playPopSound() {
+
+      initAudio();
+
+      playTone(
+        520,
+        0.08,
+        "sine",
+        0.08,
+        850
+      );
+
+    }
+
+
+    /*
+      WHACK SOUND
+
+      Lower, punchier sound for successful hits.
+    */
+
+    function playWhackSound() {
+
+      initAudio();
+
+      playTone(
+        180,
+        0.09,
+        "square",
+        0.14,
+        70
+      );
+
+      setTimeout(() => {
+
+        playTone(
+          95,
+          0.07,
+          "triangle",
+          0.08,
+          55
+        );
+
+      }, 25);
+
+    }
+
+
+    /*
+      TIME-UP BUZZER
+
+      Two low tones create a simple
+      arcade-style end buzzer.
+    */
+
+    function playBuzzerSound() {
+
+      initAudio();
+
+      playTone(
+        150,
+        0.45,
+        "sawtooth",
+        0.11,
+        105
+      );
+
+      setTimeout(() => {
+
+        playTone(
+          115,
+          0.5,
+          "sawtooth",
+          0.10,
+          75
+        );
+
+      }, 190);
+
+    }
 
 
     /* =====================================
@@ -814,12 +839,13 @@
 
       card.addEventListener("click", () => {
 
+        initAudio();
+
         characterCards.forEach(otherCard => {
           otherCard.classList.remove("selected");
         });
 
         card.classList.add("selected");
-
 
         selectedCharacter =
           card.dataset.character;
@@ -830,11 +856,11 @@
         selectedName =
           card.dataset.name;
 
-
         continueButton.disabled = false;
 
         continueButton.textContent =
-          "PLAY AS " + selectedName.toUpperCase();
+          "PLAY AS " +
+          selectedName.toUpperCase();
 
       });
 
@@ -845,21 +871,38 @@
        ENTER GAME
     ====================================== */
 
-    continueButton.addEventListener("click", () => {
+    continueButton.addEventListener(
+      "click",
+      () => {
 
-      if (!selectedCharacter) {
-        return;
+        initAudio();
+
+        if (!selectedCharacter) {
+          return;
+        }
+
+        updateTargets();
+
+        characterScreen.classList.remove(
+          "active"
+        );
+
+        gameScreen.classList.add(
+          "active"
+        );
+
+        startButton.style.display =
+          "inline-block";
+
+        changeCharacterButton.style.display =
+          "inline-block";
+
+        message.textContent =
+          selectedName +
+          " is ready for a smashing!";
+
       }
-
-      updateTargets();
-
-      characterScreen.classList.remove("active");
-      gameScreen.classList.add("active");
-
-      message.textContent =
-        selectedName + " is ready for a smashing!";
-
-    });
+    );
 
 
     /* =====================================
@@ -901,17 +944,18 @@
         hole =
           holes[
             Math.floor(
-              Math.random() * holes.length
+              Math.random() *
+              holes.length
             )
           ];
 
-      }
-      while (
+      } while (
         hole === currentHole &&
         holes.length > 1
       );
 
       return hole;
+
     }
 
 
@@ -934,7 +978,14 @@
 
 
       /*
-        The target stays up for
+        POP!
+      */
+
+      playPopSound();
+
+
+      /*
+        Target remains visible for
         500 to 950 milliseconds.
       */
 
@@ -952,10 +1003,14 @@
           }
 
           if (
-            hole.classList.contains("active")
+            hole.classList.contains(
+              "active"
+            )
           ) {
 
-            hole.classList.remove("active");
+            hole.classList.remove(
+              "active"
+            );
 
             misses++;
 
@@ -974,7 +1029,7 @@
 
 
     /* =====================================
-       NEXT TARGET
+       SCHEDULE NEXT TARGET
     ====================================== */
 
     function scheduleNextTarget() {
@@ -983,17 +1038,10 @@
         return;
       }
 
-
-      /*
-        Random delay keeps the game
-        from feeling robotic.
-      */
-
       const delay =
         Math.floor(
           Math.random() * 301
         ) + 120;
-
 
       spawnTimeout =
         setTimeout(
@@ -1015,7 +1063,9 @@
       }
 
       if (
-        !hole.classList.contains("active")
+        !hole.classList.contains(
+          "active"
+        )
       ) {
         return;
       }
@@ -1023,9 +1073,20 @@
 
       clearTimeout(targetTimeout);
 
+      hole.classList.remove(
+        "active"
+      );
 
-      hole.classList.remove("active");
-      hole.classList.add("hit");
+      hole.classList.add(
+        "hit"
+      );
+
+
+      /*
+        WHACK!
+      */
+
+      playWhackSound();
 
 
       score++;
@@ -1033,10 +1094,6 @@
       scoreDisplay.textContent =
         score;
 
-
-      /*
-        Little score messages.
-      */
 
       const hitMessages = [
         "SMASH! 💥",
@@ -1058,7 +1115,9 @@
 
       setTimeout(() => {
 
-        hole.classList.remove("hit");
+        hole.classList.remove(
+          "hit"
+        );
 
       }, 120);
 
@@ -1076,16 +1135,13 @@
 
     holes.forEach(hole => {
 
-      /*
-        Pointer events work with
-        mouse, touchscreen and stylus.
-      */
-
       hole.addEventListener(
         "pointerdown",
         event => {
 
           event.preventDefault();
+
+          initAudio();
 
           hitTarget(hole);
 
@@ -1101,7 +1157,10 @@
 
     function startGame() {
 
+      initAudio();
+
       clearGameTimers();
+
 
       holes.forEach(hole => {
 
@@ -1117,7 +1176,6 @@
       misses = 0;
       timeLeft = 30;
 
-
       scoreDisplay.textContent =
         score;
 
@@ -1127,11 +1185,9 @@
       timerDisplay.textContent =
         timeLeft;
 
-
       timerDisplay.classList.remove(
         "warning"
       );
-
 
       gameOver.classList.remove(
         "show"
@@ -1155,26 +1211,27 @@
 
 
       /*
-        Give the player half a second
-        before the first target appears.
+        First target appears after
+        half a second.
       */
 
-      setTimeout(() => {
+      firstTargetTimeout =
+        setTimeout(() => {
 
-        if (!gameRunning) {
-          return;
-        }
+          if (!gameRunning) {
+            return;
+          }
 
-        message.textContent =
-          "SMASH 'EM!";
+          message.textContent =
+            "SMASH 'EM!";
 
-        showTarget();
+          showTarget();
 
-      }, 500);
+        }, 500);
 
 
       /*
-        30 second countdown timer.
+        30 SECOND TIMER
       */
 
       timerInterval =
@@ -1212,6 +1269,10 @@
 
     function endGame() {
 
+      if (!gameRunning) {
+        return;
+      }
+
       gameRunning = false;
 
       clearGameTimers();
@@ -1229,7 +1290,15 @@
 
       currentHole = null;
 
-      timerDisplay.textContent = "0";
+      timerDisplay.textContent =
+        "0";
+
+
+      /*
+        BUZZZZ!
+      */
+
+      playBuzzerSound();
 
 
       finalScore.innerHTML =
@@ -1240,10 +1309,6 @@
         misses +
         "</strong>";
 
-
-      /*
-        Performance message.
-      */
 
       if (score >= 30) {
 
@@ -1283,7 +1348,7 @@
 
 
     /* =====================================
-       CLEAR TIMERS
+       CLEAR GAME TIMERS
     ====================================== */
 
     function clearGameTimers() {
@@ -1294,6 +1359,10 @@
 
       clearTimeout(
         spawnTimeout
+      );
+
+      clearTimeout(
+        firstTargetTimeout
       );
 
       clearInterval(
@@ -1311,6 +1380,8 @@
       "click",
       () => {
 
+        initAudio();
+
         gameOver.classList.remove(
           "show"
         );
@@ -1327,7 +1398,12 @@
 
     startButton.addEventListener(
       "click",
-      startGame
+      () => {
+
+        initAudio();
+        startGame();
+
+      }
     );
 
 
@@ -1338,6 +1414,8 @@
     changeCharacterButton.addEventListener(
       "click",
       () => {
+
+        initAudio();
 
         gameRunning = false;
 
