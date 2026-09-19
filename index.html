@@ -2,204 +2,517 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pop Smash!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Pop-Up Smash!</title>
 
   <style>
     * {
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
       user-select: none;
     }
 
+    html,
     body {
       margin: 0;
-      min-height: 100vh;
+      padding: 0;
+      min-height: 100%;
       font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(135deg, #111827, #312e81);
+      background:
+        radial-gradient(circle at top, #4338ca 0%, #1e1b4b 45%, #09090b 100%);
       color: white;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       justify-content: center;
       align-items: center;
+      overflow-x: hidden;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .app {
+      width: min(96vw, 620px);
+      padding: 20px 14px 28px;
       text-align: center;
     }
 
-    .game {
-      width: min(94vw, 600px);
-      padding: 25px;
-    }
+    /* -------------------------
+       TITLE
+    -------------------------- */
 
-    h1 {
-      margin: 0 0 8px;
-      font-size: clamp(42px, 8vw, 70px);
+    .logo {
+      margin: 0;
+      font-size: clamp(42px, 10vw, 72px);
+      line-height: 0.95;
+      font-weight: 900;
       color: #facc15;
+      letter-spacing: -3px;
+
       text-shadow:
-        0 4px 0 #b45309,
-        0 8px 20px rgba(0,0,0,.5);
+        0 4px 0 #ea580c,
+        0 8px 0 #9a3412,
+        0 12px 25px rgba(0, 0, 0, 0.45);
     }
 
     .subtitle {
-      margin-bottom: 20px;
-      color: #d1d5db;
-      font-size: 18px;
+      margin: 14px 0 22px;
+      font-size: clamp(15px, 4vw, 19px);
+      color: #e2e8f0;
     }
 
-    .stats {
+    /* -------------------------
+       SCREENS
+    -------------------------- */
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    /* -------------------------
+       CHARACTER SELECT
+    -------------------------- */
+
+    .select-title {
+      font-size: clamp(23px, 6vw, 32px);
+      font-weight: 900;
+      margin-bottom: 7px;
+    }
+
+    .select-help {
+      color: #cbd5e1;
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+
+    .characters {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
+    }
+
+    .character-card {
+      position: relative;
+      border: 3px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.09);
+      border-radius: 20px;
+      padding: 13px 6px 12px;
+      cursor: pointer;
+      transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        background 0.15s ease;
+
+      color: white;
+    }
+
+    .character-card:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .character-card.selected {
+      border-color: #facc15;
+      background: rgba(250, 204, 21, 0.18);
+      transform: translateY(-5px) scale(1.02);
+
+      box-shadow:
+        0 0 0 3px rgba(250, 204, 21, 0.15),
+        0 12px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    .character-preview {
+      width: min(20vw, 100px);
+      height: min(20vw, 100px);
+      min-width: 72px;
+      min-height: 72px;
+
+      margin: 0 auto 10px;
+      border-radius: 50%;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      font-size: clamp(42px, 10vw, 65px);
+
+      background:
+        linear-gradient(145deg, #f8fafc, #cbd5e1);
+
+      border: 4px solid white;
+
+      box-shadow:
+        inset 0 -8px 0 rgba(0, 0, 0, 0.12),
+        0 7px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .character-name {
+      font-weight: 900;
+      font-size: clamp(13px, 3.5vw, 17px);
+    }
+
+    .character-card:nth-child(1) .character-preview {
+      background: linear-gradient(145deg, #fef08a, #f97316);
+    }
+
+    .character-card:nth-child(2) .character-preview {
+      background: linear-gradient(145deg, #86efac, #16a34a);
+    }
+
+    .character-card:nth-child(3) .character-preview {
+      background: linear-gradient(145deg, #93c5fd, #7c3aed);
+    }
+
+    /* -------------------------
+       BUTTONS
+    -------------------------- */
+
+    .main-button {
+      border: 0;
+      border-radius: 17px;
+      padding: 15px 32px;
+      min-width: 210px;
+
+      background: #facc15;
+      color: #111827;
+
+      font-size: 21px;
+      font-weight: 900;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 6px 0 #b45309,
+        0 10px 22px rgba(0, 0, 0, 0.35);
+
+      transition:
+        transform 0.08s ease,
+        box-shadow 0.08s ease;
+    }
+
+    .main-button:hover {
+      transform: translateY(-2px);
+    }
+
+    .main-button:active {
+      transform: translateY(5px);
+
+      box-shadow:
+        0 1px 0 #b45309,
+        0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .main-button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .small-button {
+      margin-top: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+      border-radius: 12px;
+      padding: 9px 16px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* -------------------------
+       GAME HUD
+    -------------------------- */
+
+    .hud {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      margin: 0 0 14px;
     }
 
     .stat {
-      background: rgba(255,255,255,.12);
-      border: 2px solid rgba(255,255,255,.18);
+      padding: 9px 5px;
       border-radius: 15px;
-      padding: 10px;
+
+      background: rgba(255, 255, 255, 0.11);
+      border: 2px solid rgba(255, 255, 255, 0.12);
+
+      box-shadow:
+        0 6px 15px rgba(0, 0, 0, 0.2);
     }
 
     .stat-label {
-      font-size: 13px;
-      color: #cbd5e1;
       text-transform: uppercase;
+      font-size: 11px;
       letter-spacing: 1px;
+      color: #cbd5e1;
+      font-weight: bold;
     }
 
     .stat-number {
-      font-size: 30px;
-      font-weight: bold;
-      margin-top: 3px;
+      margin-top: 2px;
+      font-size: clamp(24px, 7vw, 34px);
+      font-weight: 900;
     }
 
     #timer.warning {
       color: #fb7185;
+      animation: pulse 0.55s infinite alternate;
     }
+
+    @keyframes pulse {
+      from {
+        transform: scale(1);
+      }
+
+      to {
+        transform: scale(1.13);
+      }
+    }
+
+    /* -------------------------
+       GAME BOARD
+    -------------------------- */
 
     .board {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin: 0 auto 22px;
+      gap: clamp(7px, 2vw, 12px);
+
+      width: 100%;
+      margin: 0 auto 18px;
     }
 
     .hole {
       position: relative;
       aspect-ratio: 1 / 1;
-      border-radius: 22px;
+
+      border-radius: clamp(14px, 4vw, 23px);
+
       overflow: hidden;
       cursor: pointer;
+
+      border: 3px solid rgba(255, 255, 255, 0.13);
+
       background:
         radial-gradient(
-          ellipse at center,
-          #020617 0%,
-          #020617 40%,
-          #1e293b 43%,
-          #475569 55%,
+          ellipse at 50% 61%,
+          #000000 0%,
+          #020617 37%,
+          #172033 40%,
+          #475569 53%,
+          #111827 70%,
           #0f172a 100%
         );
-      border: 3px solid rgba(255,255,255,.15);
+
       box-shadow:
-        inset 0 8px 15px rgba(0,0,0,.8),
-        0 6px 12px rgba(0,0,0,.3);
+        inset 0 8px 18px rgba(0, 0, 0, 0.9),
+        0 6px 13px rgba(0, 0, 0, 0.32);
     }
+
+    .hole::after {
+      content: "";
+      position: absolute;
+
+      width: 80%;
+      height: 19%;
+
+      left: 10%;
+      bottom: 6%;
+
+      background: #020617;
+      border-radius: 50%;
+
+      opacity: 0.9;
+
+      z-index: 3;
+    }
+
+    /* -------------------------
+       POP-UP TARGET
+    -------------------------- */
 
     .target {
       position: absolute;
+
       width: 72%;
       height: 72%;
+
       left: 14%;
-      bottom: -85%;
-      border-radius: 50%;
-      background: linear-gradient(145deg, #f97316, #dc2626);
-      border: 5px solid #fed7aa;
-      box-shadow:
-        inset -8px -10px 0 rgba(0,0,0,.15),
-        0 6px 12px rgba(0,0,0,.4);
+      bottom: -78%;
+
+      border-radius: 50% 50% 44% 44%;
 
       display: flex;
       justify-content: center;
       align-items: center;
 
-      font-size: clamp(30px, 7vw, 55px);
+      font-size: clamp(42px, 12vw, 72px);
 
-      transition: bottom .12s ease-out, transform .08s ease;
+      background:
+        linear-gradient(145deg, #f8fafc, #94a3b8);
+
+      border: 4px solid white;
+
+      box-shadow:
+        inset 0 -9px 0 rgba(0, 0, 0, 0.15),
+        0 8px 14px rgba(0, 0, 0, 0.4);
+
+      transition:
+        bottom 0.13s ease-out,
+        transform 0.09s ease;
+
+      z-index: 2;
+    }
+
+    .target.orange {
+      background: linear-gradient(145deg, #fef08a, #f97316);
+    }
+
+    .target.green {
+      background: linear-gradient(145deg, #86efac, #16a34a);
+    }
+
+    .target.purple {
+      background: linear-gradient(145deg, #93c5fd, #7c3aed);
     }
 
     .hole.active .target {
-      bottom: 12%;
-    }
-
-    .target::before {
-      content: "💥";
+      bottom: 14%;
     }
 
     .hole.hit .target {
-      transform: scale(.65) rotate(15deg);
+      transform: scale(0.55) rotate(20deg);
     }
 
-    button {
-      border: none;
-      border-radius: 16px;
-      padding: 15px 38px;
-      font-size: 22px;
-      font-weight: bold;
-      cursor: pointer;
-      background: #facc15;
-      color: #111827;
-      box-shadow:
-        0 6px 0 #b45309,
-        0 10px 20px rgba(0,0,0,.35);
-      transition: transform .08s, box-shadow .08s;
+    .hole.hit {
+      animation: holeHit 0.16s ease;
     }
 
-    button:hover {
-      transform: translateY(-2px);
+    @keyframes holeHit {
+      50% {
+        border-color: #facc15;
+        transform: scale(0.96);
+      }
     }
 
-    button:active {
-      transform: translateY(5px);
-      box-shadow:
-        0 1px 0 #b45309,
-        0 4px 10px rgba(0,0,0,.35);
-    }
-
-    button:disabled {
-      opacity: .6;
-      cursor: default;
-    }
+    /* -------------------------
+       GAME MESSAGE
+    -------------------------- */
 
     #message {
-      min-height: 32px;
-      margin-top: 18px;
-      font-size: 21px;
-      font-weight: bold;
+      min-height: 30px;
+      margin: 15px 0 0;
       color: #facc15;
+      font-size: clamp(17px, 5vw, 22px);
+      font-weight: 900;
     }
 
-    .flash {
-      animation: flash .18s ease;
+    /* -------------------------
+       GAME OVER PANEL
+    -------------------------- */
+
+    .game-over {
+      display: none;
+
+      margin: 15px 0 0;
+      padding: 17px;
+
+      background: rgba(0, 0, 0, 0.28);
+
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
     }
 
-    @keyframes flash {
-      50% {
-        background-color: rgba(255,255,255,.25);
-      }
+    .game-over.show {
+      display: block;
     }
 
-    @media (max-width: 450px) {
-      .game {
-        padding: 15px;
+    .game-over-title {
+      color: #facc15;
+      font-size: 28px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .final-score {
+      font-size: 19px;
+      margin-bottom: 15px;
+    }
+
+    /* -------------------------
+       MOBILE
+    -------------------------- */
+
+    @media (max-width: 480px) {
+
+      body {
+        align-items: flex-start;
       }
 
-      .board {
-        gap: 8px;
+      .app {
+        padding-top: 18px;
       }
 
-      .hole {
+      .characters {
+        gap: 7px;
+      }
+
+      .character-card {
+        padding: 10px 3px;
         border-radius: 15px;
       }
 
-      .stat-number {
-        font-size: 25px;
+      .board {
+        max-width: 430px;
+      }
+
+      .target {
+        border-width: 3px;
+      }
+
+      .logo {
+        letter-spacing: -2px;
+      }
+    }
+
+    @media (max-height: 720px) and (orientation: landscape) {
+
+      body {
+        align-items: flex-start;
+      }
+
+      .app {
+        max-width: 480px;
+        padding-top: 8px;
+      }
+
+      .logo {
+        font-size: 40px;
+      }
+
+      .subtitle {
+        margin: 6px 0 10px;
+      }
+
+      .hud {
+        margin-bottom: 7px;
+      }
+
+      .board {
+        max-width: 350px;
+        gap: 6px;
       }
     }
   </style>
@@ -207,68 +520,278 @@
 
 <body>
 
-  <main class="game">
+  <main class="app">
 
-    <h1>POP SMASH!</h1>
+    <h1 class="logo">POP-UP<br>SMASH!</h1>
 
     <div class="subtitle">
-      Smash the targets before they disappear!
+      Pick your target. Then smash as many as you can!
     </div>
 
-    <section class="stats">
 
-      <div class="stat">
-        <div class="stat-label">Score</div>
-        <div class="stat-number" id="score">0</div>
+    <!-- =====================================
+         CHARACTER SELECTION SCREEN
+    ====================================== -->
+
+    <section id="characterScreen" class="screen active">
+
+      <div class="select-title">
+        CHOOSE YOUR CHARACTER
       </div>
 
-      <div class="stat">
-        <div class="stat-label">Time</div>
-        <div class="stat-number" id="timer">30</div>
+      <div class="select-help">
+        Tap a character to make them your target.
       </div>
 
-      <div class="stat">
-        <div class="stat-label">Misses</div>
-        <div class="stat-number" id="misses">0</div>
+      <div class="characters">
+
+        <button
+          class="character-card"
+          data-character="🤪"
+          data-color="orange"
+          data-name="Goofball"
+          type="button"
+        >
+
+          <div class="character-preview">
+            🤪
+          </div>
+
+          <div class="character-name">
+            GOOFBALL
+          </div>
+
+        </button>
+
+
+        <button
+          class="character-card"
+          data-character="👽"
+          data-color="green"
+          data-name="Alien"
+          type="button"
+        >
+
+          <div class="character-preview">
+            👽
+          </div>
+
+          <div class="character-name">
+            ALIEN
+          </div>
+
+        </button>
+
+
+        <button
+          class="character-card"
+          data-character="🤡"
+          data-color="purple"
+          data-name="Clown"
+          type="button"
+        >
+
+          <div class="character-preview">
+            🤡
+          </div>
+
+          <div class="character-name">
+            CLOWN
+          </div>
+
+        </button>
+
       </div>
+
+
+      <button
+        id="continueButton"
+        class="main-button"
+        type="button"
+        disabled
+      >
+        SELECT A CHARACTER
+      </button>
 
     </section>
 
-    <section class="board" id="board">
 
-      <div class="hole"><div class="target"></div></div>
-      <div class="hole"><div class="target"></div></div>
-      <div class="hole"><div class="target"></div></div>
+    <!-- =====================================
+         GAME SCREEN
+    ====================================== -->
 
-      <div class="hole"><div class="target"></div></div>
-      <div class="hole"><div class="target"></div></div>
-      <div class="hole"><div class="target"></div></div>
+    <section id="gameScreen" class="screen">
 
-      <div class="hole"><div class="target"></div></div>
-      <div class="hole"><div class="target"></div></div>
-      <div class="hole"><div class="target"></div></div>
+      <div class="hud">
+
+        <div class="stat">
+          <div class="stat-label">Score</div>
+          <div id="score" class="stat-number">0</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-label">Time</div>
+          <div id="timer" class="stat-number">30</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-label">Misses</div>
+          <div id="misses" class="stat-number">0</div>
+        </div>
+
+      </div>
+
+
+      <div id="board" class="board">
+
+        <div class="hole">
+          <div class="target"></div>
+        </div>
+
+        <div class="hole">
+          <div class="target"></div>
+        </div>
+
+        <div class="hole">
+          <div class="target"></div>
+        </div>
+
+
+        <div class="hole">
+          <div class="target"></div>
+        </div>
+
+        <div class="hole">
+          <div class="target"></div>
+        </div>
+
+        <div class="hole">
+          <div class="target"></div>
+        </div>
+
+
+        <div class="hole">
+          <div class="target"></div>
+        </div>
+
+        <div class="hole">
+          <div class="target"></div>
+        </div>
+
+        <div class="hole">
+          <div class="target"></div>
+        </div>
+
+      </div>
+
+
+      <button
+        id="startButton"
+        class="main-button"
+        type="button"
+      >
+        START GAME
+      </button>
+
+
+      <div id="message">
+        Ready to smash?
+      </div>
+
+
+      <button
+        id="changeCharacterButton"
+        class="small-button"
+        type="button"
+      >
+        Change Character
+      </button>
+
+
+      <div id="gameOver" class="game-over">
+
+        <div class="game-over-title">
+          TIME'S UP! 💥
+        </div>
+
+        <div id="finalScore" class="final-score">
+          Final Score: 0
+        </div>
+
+        <button
+          id="playAgainButton"
+          class="main-button"
+          type="button"
+        >
+          PLAY AGAIN
+        </button>
+
+      </div>
 
     </section>
-
-    <button id="startButton">
-      START GAME
-    </button>
-
-    <div id="message">
-      Press START to play
-    </div>
 
   </main>
 
 
   <script>
 
-    const holes = document.querySelectorAll(".hole");
-    const scoreDisplay = document.getElementById("score");
-    const timerDisplay = document.getElementById("timer");
-    const missesDisplay = document.getElementById("misses");
-    const startButton = document.getElementById("startButton");
-    const message = document.getElementById("message");
+    /* =====================================
+       ELEMENTS
+    ====================================== */
+
+    const characterScreen =
+      document.getElementById("characterScreen");
+
+    const gameScreen =
+      document.getElementById("gameScreen");
+
+    const characterCards =
+      document.querySelectorAll(".character-card");
+
+    const continueButton =
+      document.getElementById("continueButton");
+
+    const startButton =
+      document.getElementById("startButton");
+
+    const changeCharacterButton =
+      document.getElementById("changeCharacterButton");
+
+    const playAgainButton =
+      document.getElementById("playAgainButton");
+
+    const holes =
+      document.querySelectorAll(".hole");
+
+    const targets =
+      document.querySelectorAll(".target");
+
+    const scoreDisplay =
+      document.getElementById("score");
+
+    const timerDisplay =
+      document.getElementById("timer");
+
+    const missesDisplay =
+      document.getElementById("misses");
+
+    const message =
+      document.getElementById("message");
+
+    const gameOver =
+      document.getElementById("gameOver");
+
+    const finalScore =
+      document.getElementById("finalScore");
+
+
+    /* =====================================
+       GAME VARIABLES
+    ====================================== */
+
+    let selectedCharacter = "";
+    let selectedColor = "";
+    let selectedName = "";
 
     let score = 0;
     let misses = 0;
@@ -277,149 +800,316 @@
     let gameRunning = false;
 
     let currentHole = null;
+
     let targetTimeout = null;
     let spawnTimeout = null;
     let timerInterval = null;
 
 
-    function randomHole() {
+    /* =====================================
+       CHARACTER SELECTION
+    ====================================== */
 
-      let newHole;
+    characterCards.forEach(card => {
 
-      do {
-        newHole = holes[
-          Math.floor(Math.random() * holes.length)
-        ];
+      card.addEventListener("click", () => {
+
+        characterCards.forEach(otherCard => {
+          otherCard.classList.remove("selected");
+        });
+
+        card.classList.add("selected");
+
+
+        selectedCharacter =
+          card.dataset.character;
+
+        selectedColor =
+          card.dataset.color;
+
+        selectedName =
+          card.dataset.name;
+
+
+        continueButton.disabled = false;
+
+        continueButton.textContent =
+          "PLAY AS " + selectedName.toUpperCase();
+
+      });
+
+    });
+
+
+    /* =====================================
+       ENTER GAME
+    ====================================== */
+
+    continueButton.addEventListener("click", () => {
+
+      if (!selectedCharacter) {
+        return;
       }
-      while (newHole === currentHole && holes.length > 1);
 
-      return newHole;
+      updateTargets();
+
+      characterScreen.classList.remove("active");
+      gameScreen.classList.add("active");
+
+      message.textContent =
+        selectedName + " is ready for a smashing!";
+
+    });
+
+
+    /* =====================================
+       UPDATE TARGET CHARACTER
+    ====================================== */
+
+    function updateTargets() {
+
+      targets.forEach(target => {
+
+        target.textContent =
+          selectedCharacter;
+
+        target.classList.remove(
+          "orange",
+          "green",
+          "purple"
+        );
+
+        target.classList.add(
+          selectedColor
+        );
+
+      });
+
     }
 
 
+    /* =====================================
+       RANDOM HOLE
+    ====================================== */
+
+    function getRandomHole() {
+
+      let hole;
+
+      do {
+
+        hole =
+          holes[
+            Math.floor(
+              Math.random() * holes.length
+            )
+          ];
+
+      }
+      while (
+        hole === currentHole &&
+        holes.length > 1
+      );
+
+      return hole;
+    }
+
+
+    /* =====================================
+       SHOW TARGET
+    ====================================== */
+
     function showTarget() {
 
-      if (!gameRunning) return;
+      if (!gameRunning) {
+        return;
+      }
 
-      const hole = randomHole();
+      const hole =
+        getRandomHole();
 
       currentHole = hole;
 
       hole.classList.add("active");
 
+
       /*
-        Target stays visible for a random amount
-        of time between 550 and 1000 milliseconds.
+        The target stays up for
+        500 to 950 milliseconds.
       */
 
       const visibleTime =
-        Math.floor(Math.random() * 451) + 550;
+        Math.floor(
+          Math.random() * 451
+        ) + 500;
 
 
-      targetTimeout = setTimeout(() => {
+      targetTimeout =
+        setTimeout(() => {
 
-        if (!gameRunning) return;
+          if (!gameRunning) {
+            return;
+          }
 
-        if (hole.classList.contains("active")) {
+          if (
+            hole.classList.contains("active")
+          ) {
 
-          hole.classList.remove("active");
+            hole.classList.remove("active");
 
-          misses++;
+            misses++;
 
-          missesDisplay.textContent = misses;
-        }
+            missesDisplay.textContent =
+              misses;
 
-        currentHole = null;
+          }
 
-        scheduleNextTarget();
+          currentHole = null;
 
-      }, visibleTime);
+          scheduleNextTarget();
+
+        }, visibleTime);
+
     }
 
+
+    /* =====================================
+       NEXT TARGET
+    ====================================== */
 
     function scheduleNextTarget() {
 
-      if (!gameRunning) return;
-
-      /*
-        Small random delay before the next target.
-      */
-
-      const delay =
-        Math.floor(Math.random() * 350) + 150;
-
-      spawnTimeout =
-        setTimeout(showTarget, delay);
-    }
-
-
-    function hitTarget(hole) {
-
-      if (!gameRunning) return;
-
-      if (!hole.classList.contains("active")) {
+      if (!gameRunning) {
         return;
       }
 
+
+      /*
+        Random delay keeps the game
+        from feeling robotic.
+      */
+
+      const delay =
+        Math.floor(
+          Math.random() * 301
+        ) + 120;
+
+
+      spawnTimeout =
+        setTimeout(
+          showTarget,
+          delay
+        );
+
+    }
+
+
+    /* =====================================
+       HIT TARGET
+    ====================================== */
+
+    function hitTarget(hole) {
+
+      if (!gameRunning) {
+        return;
+      }
+
+      if (
+        !hole.classList.contains("active")
+      ) {
+        return;
+      }
+
+
       clearTimeout(targetTimeout);
+
 
       hole.classList.remove("active");
       hole.classList.add("hit");
 
+
       score++;
 
-      scoreDisplay.textContent = score;
+      scoreDisplay.textContent =
+        score;
 
-      message.textContent = "SMASH! 💥";
+
+      /*
+        Little score messages.
+      */
+
+      const hitMessages = [
+        "SMASH! 💥",
+        "POW! 💥",
+        "GOT 'EM! 🔨",
+        "BOOM! 💥",
+        "NICE HIT! 🔥"
+      ];
+
+
+      message.textContent =
+        hitMessages[
+          Math.floor(
+            Math.random() *
+            hitMessages.length
+          )
+        ];
+
 
       setTimeout(() => {
+
         hole.classList.remove("hit");
-      }, 100);
+
+      }, 120);
+
 
       currentHole = null;
 
       scheduleNextTarget();
+
     }
 
 
+    /* =====================================
+       HOLE CONTROLS
+    ====================================== */
+
     holes.forEach(hole => {
 
-      hole.addEventListener("click", () => {
-        hitTarget(hole);
-      });
-
       /*
-        Makes it respond nicely on touch screens.
+        Pointer events work with
+        mouse, touchscreen and stylus.
       */
 
       hole.addEventListener(
-        "touchstart",
-        (event) => {
+        "pointerdown",
+        event => {
 
           event.preventDefault();
 
           hitTarget(hole);
 
-        },
-        { passive: false }
+        }
       );
 
     });
 
 
+    /* =====================================
+       START GAME
+    ====================================== */
+
     function startGame() {
 
-      /*
-        Clear anything left from a previous game.
-      */
-
-      clearTimeout(targetTimeout);
-      clearTimeout(spawnTimeout);
-      clearInterval(timerInterval);
+      clearGameTimers();
 
       holes.forEach(hole => {
-        hole.classList.remove("active");
-        hole.classList.remove("hit");
+
+        hole.classList.remove(
+          "active",
+          "hit"
+        );
+
       });
 
 
@@ -427,115 +1117,268 @@
       misses = 0;
       timeLeft = 30;
 
-      scoreDisplay.textContent = score;
-      missesDisplay.textContent = misses;
-      timerDisplay.textContent = timeLeft;
 
-      timerDisplay.classList.remove("warning");
+      scoreDisplay.textContent =
+        score;
+
+      missesDisplay.textContent =
+        misses;
+
+      timerDisplay.textContent =
+        timeLeft;
+
+
+      timerDisplay.classList.remove(
+        "warning"
+      );
+
+
+      gameOver.classList.remove(
+        "show"
+      );
+
 
       gameRunning = true;
 
       currentHole = null;
 
-      startButton.disabled = true;
-      startButton.textContent = "GAME ON!";
 
-      message.textContent = "GET READY...";
+      startButton.style.display =
+        "none";
+
+      changeCharacterButton.style.display =
+        "none";
+
+
+      message.textContent =
+        "GET READY...";
+
 
       /*
-        Start popping targets.
+        Give the player half a second
+        before the first target appears.
       */
 
       setTimeout(() => {
 
-        if (gameRunning) {
-
-          message.textContent = "SMASH 'EM!";
-
-          showTarget();
-
+        if (!gameRunning) {
+          return;
         }
+
+        message.textContent =
+          "SMASH 'EM!";
+
+        showTarget();
 
       }, 500);
 
 
       /*
-        30 second countdown.
+        30 second countdown timer.
       */
 
-      timerInterval = setInterval(() => {
+      timerInterval =
+        setInterval(() => {
 
-        timeLeft--;
+          timeLeft--;
 
-        timerDisplay.textContent = timeLeft;
+          timerDisplay.textContent =
+            timeLeft;
 
-        if (timeLeft <= 5) {
-          timerDisplay.classList.add("warning");
-        }
 
-        if (timeLeft <= 0) {
-          endGame();
-        }
+          if (timeLeft <= 5) {
 
-      }, 1000);
+            timerDisplay.classList.add(
+              "warning"
+            );
+
+          }
+
+
+          if (timeLeft <= 0) {
+
+            endGame();
+
+          }
+
+        }, 1000);
+
     }
 
+
+    /* =====================================
+       END GAME
+    ====================================== */
 
     function endGame() {
 
       gameRunning = false;
 
-      clearInterval(timerInterval);
-      clearTimeout(targetTimeout);
-      clearTimeout(spawnTimeout);
+      clearGameTimers();
+
 
       holes.forEach(hole => {
-        hole.classList.remove("active");
-        hole.classList.remove("hit");
+
+        hole.classList.remove(
+          "active",
+          "hit"
+        );
+
       });
+
 
       currentHole = null;
 
       timerDisplay.textContent = "0";
 
-      startButton.disabled = false;
-      startButton.textContent = "PLAY AGAIN";
+
+      finalScore.innerHTML =
+        "Final Score: <strong>" +
+        score +
+        "</strong><br>" +
+        "Misses: <strong>" +
+        misses +
+        "</strong>";
+
 
       /*
-        Different ending messages depending
-        on the player's score.
+        Performance message.
       */
 
       if (score >= 30) {
 
         message.textContent =
-          "🔥 UNREAL! Score: " + score;
+          "🔥 SMASH MASTER!";
 
       }
       else if (score >= 20) {
 
         message.textContent =
-          "💥 AWESOME! Score: " + score;
+          "💥 AWESOME RUN!";
 
       }
       else if (score >= 10) {
 
         message.textContent =
-          "👏 NICE RUN! Score: " + score;
+          "👏 NICE SMASHING!";
 
       }
       else {
 
         message.textContent =
-          "GAME OVER — Score: " + score;
+          "Keep swinging! 🔨";
 
       }
+
+
+      gameOver.classList.add(
+        "show"
+      );
+
+
+      changeCharacterButton.style.display =
+        "inline-block";
+
     }
 
+
+    /* =====================================
+       CLEAR TIMERS
+    ====================================== */
+
+    function clearGameTimers() {
+
+      clearTimeout(
+        targetTimeout
+      );
+
+      clearTimeout(
+        spawnTimeout
+      );
+
+      clearInterval(
+        timerInterval
+      );
+
+    }
+
+
+    /* =====================================
+       PLAY AGAIN
+    ====================================== */
+
+    playAgainButton.addEventListener(
+      "click",
+      () => {
+
+        gameOver.classList.remove(
+          "show"
+        );
+
+        startGame();
+
+      }
+    );
+
+
+    /* =====================================
+       START BUTTON
+    ====================================== */
 
     startButton.addEventListener(
       "click",
       startGame
+    );
+
+
+    /* =====================================
+       CHANGE CHARACTER
+    ====================================== */
+
+    changeCharacterButton.addEventListener(
+      "click",
+      () => {
+
+        gameRunning = false;
+
+        clearGameTimers();
+
+
+        holes.forEach(hole => {
+
+          hole.classList.remove(
+            "active",
+            "hit"
+          );
+
+        });
+
+
+        gameScreen.classList.remove(
+          "active"
+        );
+
+        characterScreen.classList.add(
+          "active"
+        );
+
+
+        gameOver.classList.remove(
+          "show"
+        );
+
+
+        startButton.style.display =
+          "inline-block";
+
+        changeCharacterButton.style.display =
+          "inline-block";
+
+
+        message.textContent =
+          "Ready to smash?";
+
+      }
     );
 
   </script>
