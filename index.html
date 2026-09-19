@@ -367,6 +367,8 @@
       line-height: 1.5;
     }
 
+    /* MOBILE */
+
     @media (max-width: 480px) {
       body {
         align-items: flex-start;
@@ -656,12 +658,16 @@
 
     /* =====================================
        BUILT-IN AUDIO
-
-       Uses Web Audio API.
-       No external sound files required.
     ====================================== */
 
     let audioContext = null;
+
+    /*
+      Used to prevent the miss sound from
+      firing repeatedly on top of itself.
+    */
+    let lastMissSoundTime = 0;
+
 
     function initAudio() {
 
@@ -683,12 +689,9 @@
       ) {
         audioContext.resume();
       }
+
     }
 
-
-    /*
-      Basic tone generator.
-    */
 
     function playTone(
       frequency,
@@ -700,7 +703,8 @@
 
       if (!audioContext) return;
 
-      const now = audioContext.currentTime;
+      const now =
+        audioContext.currentTime;
 
       const oscillator =
         audioContext.createOscillator();
@@ -708,12 +712,16 @@
       const gain =
         audioContext.createGain();
 
-      oscillator.type = type;
+
+      oscillator.type =
+        type;
+
 
       oscillator.frequency.setValueAtTime(
         frequency,
         now
       );
+
 
       if (endFrequency !== null) {
 
@@ -723,6 +731,7 @@
         );
 
       }
+
 
       gain.gain.setValueAtTime(
         volume,
@@ -734,20 +743,19 @@
         now + duration
       );
 
+
       oscillator.connect(gain);
       gain.connect(audioContext.destination);
 
       oscillator.start(now);
       oscillator.stop(now + duration);
+
     }
 
 
-    /*
-      POP SOUND
-
-      Short high-pitched "boop" whenever
-      a target comes out of a hole.
-    */
+    /* =====================================
+       POP SOUND
+    ====================================== */
 
     function playPopSound() {
 
@@ -764,11 +772,9 @@
     }
 
 
-    /*
-      WHACK SOUND
-
-      Lower, punchier sound for successful hits.
-    */
+    /* =====================================
+       WHACK SOUND
+    ====================================== */
 
     function playWhackSound() {
 
@@ -782,7 +788,10 @@
         70
       );
 
+
       setTimeout(() => {
+
+        if (!gameRunning) return;
 
         playTone(
           95,
@@ -797,12 +806,58 @@
     }
 
 
-    /*
-      TIME-UP BUZZER
+    /* =====================================
+       MISS SOUND
 
-      Two low tones create a simple
-      arcade-style end buzzer.
-    */
+       Short, low downward thud.
+
+       This is deliberately different from
+       both the whack and end-game buzzer.
+
+       The cooldown prevents multiple miss
+       sounds from stacking annoyingly.
+    ====================================== */
+
+    function playMissSound() {
+
+      initAudio();
+
+      if (!audioContext) return;
+
+
+      const now =
+        audioContext.currentTime;
+
+
+      /*
+        Don't allow another miss sound
+        within 180 milliseconds.
+      */
+
+      if (
+        now - lastMissSoundTime < 0.18
+      ) {
+        return;
+      }
+
+
+      lastMissSoundTime = now;
+
+
+      playTone(
+        115,
+        0.12,
+        "triangle",
+        0.09,
+        65
+      );
+
+    }
+
+
+    /* =====================================
+       END BUZZER
+    ====================================== */
 
     function playBuzzerSound() {
 
@@ -815,6 +870,7 @@
         0.11,
         105
       );
+
 
       setTimeout(() => {
 
@@ -837,32 +893,49 @@
 
     characterCards.forEach(card => {
 
-      card.addEventListener("click", () => {
+      card.addEventListener(
+        "click",
+        () => {
 
-        initAudio();
+          initAudio();
 
-        characterCards.forEach(otherCard => {
-          otherCard.classList.remove("selected");
-        });
 
-        card.classList.add("selected");
+          characterCards.forEach(
+            otherCard => {
 
-        selectedCharacter =
-          card.dataset.character;
+              otherCard.classList.remove(
+                "selected"
+              );
 
-        selectedColor =
-          card.dataset.color;
+            }
+          );
 
-        selectedName =
-          card.dataset.name;
 
-        continueButton.disabled = false;
+          card.classList.add(
+            "selected"
+          );
 
-        continueButton.textContent =
-          "PLAY AS " +
-          selectedName.toUpperCase();
 
-      });
+          selectedCharacter =
+            card.dataset.character;
+
+          selectedColor =
+            card.dataset.color;
+
+          selectedName =
+            card.dataset.name;
+
+
+          continueButton.disabled =
+            false;
+
+
+          continueButton.textContent =
+            "PLAY AS " +
+            selectedName.toUpperCase();
+
+        }
+      );
 
     });
 
@@ -881,7 +954,9 @@
           return;
         }
 
+
         updateTargets();
+
 
         characterScreen.classList.remove(
           "active"
@@ -891,11 +966,13 @@
           "active"
         );
 
+
         startButton.style.display =
           "inline-block";
 
         changeCharacterButton.style.display =
           "inline-block";
+
 
         message.textContent =
           selectedName +
@@ -906,7 +983,7 @@
 
 
     /* =====================================
-       UPDATE TARGET CHARACTER
+       UPDATE TARGETS
     ====================================== */
 
     function updateTargets() {
@@ -916,11 +993,13 @@
         target.textContent =
           selectedCharacter;
 
+
         target.classList.remove(
           "orange",
           "green",
           "purple"
         );
+
 
         target.classList.add(
           selectedColor
@@ -939,6 +1018,7 @@
 
       let hole;
 
+
       do {
 
         hole =
@@ -949,10 +1029,12 @@
             )
           ];
 
-      } while (
+      }
+      while (
         hole === currentHole &&
         holes.length > 1
       );
+
 
       return hole;
 
@@ -969,16 +1051,22 @@
         return;
       }
 
+
       const hole =
         getRandomHole();
 
-      currentHole = hole;
 
-      hole.classList.add("active");
+      currentHole =
+        hole;
+
+
+      hole.classList.add(
+        "active"
+      );
 
 
       /*
-        POP!
+        Target appears: POP.
       */
 
       playPopSound();
@@ -1002,24 +1090,49 @@
             return;
           }
 
+
           if (
             hole.classList.contains(
               "active"
             )
           ) {
 
+            /*
+              Target escaped.
+            */
+
             hole.classList.remove(
               "active"
             );
+
+
+            /*
+              MISS STILL COUNTS.
+            */
 
             misses++;
 
             missesDisplay.textContent =
               misses;
 
+
+            /*
+              NEW MISS SOUND.
+            */
+
+            playMissSound();
+
+
+            message.textContent =
+              "MISS!";
+
+
           }
 
-          currentHole = null;
+
+          currentHole =
+            null;
+
 
           scheduleNextTarget();
 
@@ -1029,7 +1142,7 @@
 
 
     /* =====================================
-       SCHEDULE NEXT TARGET
+       NEXT TARGET
     ====================================== */
 
     function scheduleNextTarget() {
@@ -1038,10 +1151,12 @@
         return;
       }
 
+
       const delay =
         Math.floor(
           Math.random() * 301
         ) + 120;
+
 
       spawnTimeout =
         setTimeout(
@@ -1062,6 +1177,7 @@
         return;
       }
 
+
       if (
         !hole.classList.contains(
           "active"
@@ -1071,7 +1187,10 @@
       }
 
 
-      clearTimeout(targetTimeout);
+      clearTimeout(
+        targetTimeout
+      );
+
 
       hole.classList.remove(
         "active"
@@ -1083,7 +1202,7 @@
 
 
       /*
-        WHACK!
+        Successful hit sound.
       */
 
       playWhackSound();
@@ -1122,7 +1241,9 @@
       }, 120);
 
 
-      currentHole = null;
+      currentHole =
+        null;
+
 
       scheduleNextTarget();
 
@@ -1176,6 +1297,9 @@
       misses = 0;
       timeLeft = 30;
 
+      lastMissSoundTime = 0;
+
+
       scoreDisplay.textContent =
         score;
 
@@ -1185,18 +1309,23 @@
       timerDisplay.textContent =
         timeLeft;
 
+
       timerDisplay.classList.remove(
         "warning"
       );
+
 
       gameOver.classList.remove(
         "show"
       );
 
 
-      gameRunning = true;
+      gameRunning =
+        true;
 
-      currentHole = null;
+
+      currentHole =
+        null;
 
 
       startButton.style.display =
@@ -1211,8 +1340,7 @@
 
 
       /*
-        First target appears after
-        half a second.
+        First target.
       */
 
       firstTargetTimeout =
@@ -1238,6 +1366,7 @@
         setInterval(() => {
 
           timeLeft--;
+
 
           timerDisplay.textContent =
             timeLeft;
@@ -1273,7 +1402,10 @@
         return;
       }
 
-      gameRunning = false;
+
+      gameRunning =
+        false;
+
 
       clearGameTimers();
 
@@ -1288,14 +1420,17 @@
       });
 
 
-      currentHole = null;
+      currentHole =
+        null;
+
 
       timerDisplay.textContent =
         "0";
 
 
       /*
-        BUZZZZ!
+        End buzzer remains separate
+        from the miss sound.
       */
 
       playBuzzerSound();
@@ -1348,7 +1483,7 @@
 
 
     /* =====================================
-       CLEAR GAME TIMERS
+       CLEAR TIMERS
     ====================================== */
 
     function clearGameTimers() {
@@ -1401,6 +1536,7 @@
       () => {
 
         initAudio();
+
         startGame();
 
       }
@@ -1417,7 +1553,10 @@
 
         initAudio();
 
-        gameRunning = false;
+
+        gameRunning =
+          false;
+
 
         clearGameTimers();
 
