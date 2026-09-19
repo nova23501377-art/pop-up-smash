@@ -662,12 +662,6 @@
 
     let audioContext = null;
 
-    /*
-      Used to prevent the miss sound from
-      firing repeatedly on top of itself.
-    */
-    let lastMissSoundTime = 0;
-
 
     function initAudio() {
 
@@ -754,7 +748,7 @@
 
 
     /* =====================================
-       POP SOUND
+       EXISTING POP SOUND
     ====================================== */
 
     function playPopSound() {
@@ -773,7 +767,7 @@
 
 
     /* =====================================
-       WHACK SOUND
+       EXISTING THWACK SOUND
     ====================================== */
 
     function playWhackSound() {
@@ -807,20 +801,20 @@
 
 
     /* =====================================
-       MISS SOUND
+       FIXED MISS SOUND
 
-       Short, low downward thud.
+       One short, quiet low "bonk" for each
+       target that disappears unhit.
 
-       This is deliberately different from
-       both the whack and end-game buzzer.
-
-       The cooldown prevents multiple miss
-       sounds from stacking annoyingly.
+       No extra timeout is used, so one miss
+       can only trigger this function once.
     ====================================== */
 
     function playMissSound() {
 
-      initAudio();
+      if (!audioContext) {
+        initAudio();
+      }
 
       if (!audioContext) return;
 
@@ -829,34 +823,70 @@
         audioContext.currentTime;
 
 
+      const oscillator =
+        audioContext.createOscillator();
+
+      const gain =
+        audioContext.createGain();
+
+
+      oscillator.type =
+        "sine";
+
+
       /*
-        Don't allow another miss sound
-        within 180 milliseconds.
+        Quick downward pitch gives it
+        a small low "bloop/bonk" sound.
       */
 
-      if (
-        now - lastMissSoundTime < 0.18
-      ) {
-        return;
-      }
+      oscillator.frequency.setValueAtTime(
+        165,
+        now
+      );
+
+      oscillator.frequency.exponentialRampToValueAtTime(
+        75,
+        now + 0.14
+      );
 
 
-      lastMissSoundTime = now;
+      /*
+        Quiet but clearly audible.
+      */
+
+      gain.gain.setValueAtTime(
+        0.075,
+        now
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        now + 0.14
+      );
 
 
-      playTone(
-        115,
-        0.12,
-        "triangle",
-        0.09,
-        65
+      oscillator.connect(
+        gain
+      );
+
+      gain.connect(
+        audioContext.destination
+      );
+
+
+      oscillator.start(
+        now
+      );
+
+      oscillator.stop(
+        now + 0.15
       );
 
     }
 
 
     /* =====================================
-       END BUZZER
+       EXISTING END BUZZER
     ====================================== */
 
     function playBuzzerSound() {
@@ -1066,7 +1096,7 @@
 
 
       /*
-        Target appears: POP.
+        Existing pop sound.
       */
 
       playPopSound();
@@ -1091,15 +1121,20 @@
           }
 
 
+          /*
+            This block executes only if the
+            target is still active.
+
+            A successful hit removes "active",
+            so the miss cannot be counted or
+            sounded after a successful hit.
+          */
+
           if (
             hole.classList.contains(
               "active"
             )
           ) {
-
-            /*
-              Target escaped.
-            */
 
             hole.classList.remove(
               "active"
@@ -1107,7 +1142,7 @@
 
 
             /*
-              MISS STILL COUNTS.
+              Count exactly one miss.
             */
 
             misses++;
@@ -1117,7 +1152,9 @@
 
 
             /*
-              NEW MISS SOUND.
+              Play exactly one miss sound
+              at the same instant the miss
+              is registered.
             */
 
             playMissSound();
@@ -1125,7 +1162,6 @@
 
             message.textContent =
               "MISS!";
-
 
           }
 
@@ -1202,7 +1238,7 @@
 
 
       /*
-        Successful hit sound.
+        Existing thwack sound.
       */
 
       playWhackSound();
@@ -1297,8 +1333,6 @@
       misses = 0;
       timeLeft = 30;
 
-      lastMissSoundTime = 0;
-
 
       scoreDisplay.textContent =
         score;
@@ -1338,10 +1372,6 @@
       message.textContent =
         "GET READY...";
 
-
-      /*
-        First target.
-      */
 
       firstTargetTimeout =
         setTimeout(() => {
@@ -1429,8 +1459,7 @@
 
 
       /*
-        End buzzer remains separate
-        from the miss sound.
+        Existing end buzzer.
       */
 
       playBuzzerSound();
